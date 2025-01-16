@@ -1,6 +1,7 @@
 # src/data_retrieval/api_client.py
 import os
 import requests
+import keyring
 import pandas as pd
 from typing import List, Dict
 
@@ -13,13 +14,20 @@ class FinancialModelingPrepClient:
         base_url (str): Base URL for API endpoints
     """
     
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """
         Initialize the Financial Modeling Prep API client.
         
         Args:
             api_key (str): API authentication token
         """
+        if api_key is None:
+            # Retrieve API key from keyring
+            service_name = 'your_service_name'
+            username = 'your_username'
+            api_key = keyring.get_password(service_name, username)
+            if not api_key:
+                raise ValueError("API key not found in keyring. Please set the 'API_FMP_KEY' environment variable or store it in keyring.")
         self.api_key = api_key
         self.base_url = "https://financialmodelingprep.com/api/v3"
     

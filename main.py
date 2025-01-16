@@ -1,13 +1,25 @@
 import os
 from src.data_retrieval.api_client import FinancialModelingPrepClient
 from src.data_processing.ranking import rank_companies_by_metrics
+import keyring
+from keyring.backends.macOS import Keyring
 
 def main():
-    # Load API key from environment variable
-    API_KEY = os.getenv('FINANCIAL_MODELING_PREP_API_KEY')
+    # Set the macOS keyring explicitly
+    keyring.set_keyring(Keyring())
+    
+    # Use the correct service name and account name
+    service_name = 'RStudio Keyring Secrets'
+    username = 'API_FMP_KEY'
+    
+    # Retrieve the API key
+    api_key = keyring.get_password(service_name, username)
+    
+    if not api_key:
+        raise ValueError("API key not found in keyring. Please ensure it is stored with service name 'RStudio Keyring Secrets' and username 'API_FMP_KEY'.")
     
     # Initialize API client
-    client = FinancialModelingPrepClient(API_KEY)
+    client = FinancialModelingPrepClient(api_key)
     
     # Get symbol list
     symbols = client.get_symbol_list()

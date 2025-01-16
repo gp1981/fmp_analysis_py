@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List, Dict
 
 def rank_companies_by_metrics(companies_data: List[Dict]) -> pd.DataFrame:
     """
