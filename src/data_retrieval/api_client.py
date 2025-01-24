@@ -1,9 +1,7 @@
 # src/data_retrieval/api_client.py
-import os
+from typing import List, Dict
 import requests
 import keyring
-import pandas as pd
-from typing import List, Dict
 
 class FinancialModelingPrepClient:
     """
