@@ -29,17 +29,35 @@ class FinancialModelingPrepClient:
         self.api_key = api_key
         self.base_url = "https://financialmodelingprep.com/api/v3"
     
-    def get_symbol_list(self) -> List[str]:
+    def get_symbol_list(self) -> List[Dict]:
         """
-        Retrieve the list of available stock symbols.
+        Retrieve the list of available stock symbols and filter them based on exchangeShortName.
         
         Returns:
-            List[str]: List of stock symbols
+            List[Dict]: Filtered list of stock symbols with financial statements
         """
-        url = f"{self.base_url}/financial-statement-symbol-lists?apikey={self.api_key}"
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
+        # Retrieve stock list data
+        url_stock_list = f"{self.base_url}/stock/list?apikey={self.api_key}"
+        response_stock_list = requests.get(url_stock_list)
+        response_stock_list.raise_for_status()
+        stock_list_data = response_stock_list.json()
+        
+        # Retrieve financial statement symbol list
+        url_financial_statement_list = f"{self.base_url}/financial-statement-symbol-lists?apikey={self.api_key}"
+        response_financial_statement_list = requests.get(url_financial_statement_list)
+        response_financial_statement_list.raise_for_status()
+        financial_statement_list = response_financial_statement_list.json()
+        
+        # Convert lists to dictionaries for easy lookup
+        financial_statement_symbols = {item: item for item in financial_statement_list}
+        
+        # Filter stock list data to include only those with financial statements
+        filtered_stock_list = [
+            stock for stock in stock_list_data
+            if stock['symbol'] in financial_statement_symbols and stock['exchangeShortName'] in {"AMEX", "ETF", "NASDAQ", "NYSE", "OTC"}
+        ]
+        
+        return filtered_stock_list
     
     def get_company_profile(self, symbol: str) -> Dict:
         """

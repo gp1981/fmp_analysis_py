@@ -37,6 +37,5 @@ class TestFinancialModelingPrepClient(unittest.TestCase):
         profile = client.get_company_profile('AAPL')
         self.assertEqual(profile, {'industry': 'tech'})
         mock_get.assert_called_once_with('https://financialmodelingprep.com/api/v3/profile/AAPL?apikey=test_api_key')
-
-if __name__ == '__main__':
-    unittest.main()
+        if __name__ == '__main__':
+            unittest.main()
